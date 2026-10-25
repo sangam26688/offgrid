@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 // Import GIFT_DATA from gifts.js
-import { GIFT_DATA } from './gifts';
+import { Gifts } from './Gifts.js';
 
 export default function GiftsPage() {
   // State variables

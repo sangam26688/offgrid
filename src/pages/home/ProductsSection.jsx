@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, ShoppingBag, User, Search, Menu, X, ChevronRight, Phone, MessageCircle, ShieldCheck, Sparkles, Gem, Watch, Crown, Filter, ArrowUpRight, Heart, Eye, Check } from "lucide-react";
-import { ALL_PRODUCTS, CATEGORIES, BRAND_NAME } from "./data";
+import { ALL_PRODUCTS, CATEGORIES, BRAND_NAME } from "./Data.js";
 // import API from "../api.js"; // Apne backend API service ka path check kar liyo
 
 export function GlassButton({ icon: IconComponent, children, pill, className = "", ...props }) {

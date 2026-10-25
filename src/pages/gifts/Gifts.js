@@ -1,4 +1,4 @@
-export const GIFT_DATA = [
+export const Gifts = [
   {
     id: 'g1',
     name: 'The Obsidian Signature Set',
