@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Plus, ShoppingBag, User, Search, Menu, X, ChevronRight, Phone, MessageCircle, ShieldCheck, Sparkles, Gem, Watch, Crown, Filter, ArrowUpRight, Heart, Eye, Check } from "lucide-react";
+import { Plus, ShoppingBag, User, Search, Menu, X, ChevronRight, Phone, MessageCircle, ShieldCheck, Sparkles, Gem, Watch, Crown, Filter, ArrowUpRight, Heart, Eye, Check, Trash2 } from "lucide-react";
 import { ALL_PRODUCTS, CATEGORIES, BRAND_NAME } from "./Data.js";
-// import API from "../api.js"; // Apne backend API service ka path check kar liyo
 
 export function GlassButton({ icon: IconComponent, children, pill, className = "", ...props }) {
   return (
@@ -38,15 +37,6 @@ export function AuthModal({ isOpen, onClose }) {
         <button onClick={onClose} className="absolute top-4 right-4 text-neutral-500 hover:text-black cursor-pointer">
           <X size={20} />
         </button>
-
-        <div className="text-center space-y-2 pt-2">
-          <h3 className="font-['Cormorant_Garamond',serif] text-3xl font-light tracking-wider uppercase">
-            Welcome to {BRAND_NAME}
-          </h3>
-          <p className="text-xs text-neutral-500 font-light">
-            Sign in or create an account for private VIP access.
-          </p>
-        </div>
 
         {authMode === 'select' ? (
           <div className="space-y-4 pt-2">
@@ -142,61 +132,107 @@ export function ContactModal({ isOpen, onClose }) {
   );
 }
 
-export default function AppLayout({ cartCount = 2 }) {
+// Cart Drawer Component to view items added to bag
+export function CartDrawer({ isOpen, onClose, cartItems, onRemoveItem }) {
+  if (!isOpen) return null;
+
+  const totalPrice = cartItems.reduce((sum, item) => sum + (parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0), 0);
+
+  return (
+    <div className="fixed inset-0 z-[3000] flex justify-end bg-black/60 backdrop-blur-md">
+      <div className="h-full w-full sm:w-[420px] bg-white text-neutral-900 shadow-2xl flex flex-col justify-between p-6 sm:p-8 overflow-y-auto">
+        <div className="flex justify-between items-center pb-4 border-b border-neutral-200">
+          <div className="flex items-center gap-2">
+            <ShoppingBag size={20} />
+            <h3 className="font-['Cormorant_Garamond',serif] text-xl font-bold">Your Shopping Bag</h3>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-neutral-100 cursor-pointer">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 my-6 space-y-4 overflow-y-auto">
+          {cartItems.length === 0 ? (
+            <div className="text-center py-20 text-neutral-400 text-xs uppercase tracking-wider">
+              Your bag is currently empty
+            </div>
+          ) : (
+            cartItems.map((item, idx) => (
+              <div key={idx} className="flex gap-4 items-center border-b border-neutral-100 pb-4">
+                <img src={item.image} alt={item.name} className="w-16 h-20 object-cover rounded-lg bg-neutral-100" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-xs">{item.name}</h4>
+                  <p className="text-xs text-amber-600 font-mono mt-1">{item.price}</p>
+                </div>
+                <button
+                  onClick={() => onRemoveItem(item.id)}
+                  className="text-neutral-400 hover:text-red-600 cursor-pointer p-2"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="border-t border-neutral-200 pt-4 space-y-4">
+          <div className="flex justify-between text-sm font-bold">
+            <span>Subtotal</span>
+            <span className="font-mono">${totalPrice}</span>
+          </div>
+          <button
+            onClick={() => alert('Proceeding to secure checkout...')}
+            className="w-full bg-black text-white py-4 rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all cursor-pointer shadow-lg"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AppLayout() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [wishlist, setWishlist] = useState([]);
+  const [cartItems, setCartItems] = useState([]); // 👉 Cart items state added
+  const [isCartOpen, setIsCartOpen] = useState(false); // 👉 Cart drawer open state
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   
-  // 👉 Backend data states
   const [products, setProducts] = useState(ALL_PRODUCTS);
-  const [loading, setLoading] = useState(false);
-
-  // 🚀 Fetch products from Backend API (`/api/products`)
-  useEffect(() => {
-    const fetchBackendProducts = async () => {
-      try {
-        setLoading(true);
-        const { data } = await API.get('/products');
-        if (data && data.length > 0) {
-          // Backend data ko local format ke sath map karna
-          const formattedProducts = data.map(item => ({
-            id: item._id,
-            name: item.name,
-            category: item.category || "General",
-            price: `₹${item.price}`,
-            image: item.images?.[0] || "https://via.placeholder.com/400",
-            description: item.description,
-            tag: item.stock > 0 ? "In Stock" : "Sold Out",
-            specifications: ["Authentic Offgrid Product", "Premium Build Quality"]
-          }));
-          setProducts(formattedProducts);
-        }
-      } catch (err) {
-        console.log("Backend offline or empty, using local mock data:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBackendProducts();
-  }, []);
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3000);
   };
 
-  const toggleWishlist = (id) => {
-    if (wishlist.includes(id)) {
-      setWishlist(wishlist.filter(item => item !== id));
-      triggerToast("Removed from wishlist");
+  // 👉 Updated toggleWishlist to also add/remove from Cart (Bag)
+  const toggleWishlist = (product) => {
+    if (wishlist.includes(product.id)) {
+      setWishlist(wishlist.filter(id => id !== product.id));
+      setCartItems(cartItems.filter(item => item.id !== product.id)); // Bag se bhi hata dega
+      triggerToast("Removed from wishlist & bag");
     } else {
-      setWishlist([...wishlist, id]);
-      triggerToast("Added to wishlist");
+      setWishlist([...wishlist, product.id]);
+      setCartItems([...cartItems, product]); // Bag mein bhi add kar dega
+      triggerToast("Added to wishlist & bag");
     }
+  };
+
+  const handleAddToCart = (product) => {
+    if (!cartItems.some(item => item.id === product.id)) {
+      setCartItems([...cartItems, product]);
+    }
+    triggerToast(`Added ${product.name} to bag`);
+    setQuickViewProduct(null);
+  };
+
+  const handleRemoveCartItem = (id) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+    triggerToast("Removed item from bag");
   };
 
   const filteredProducts = selectedCategory === "All"
@@ -216,9 +252,20 @@ export default function AppLayout({ cartCount = 2 }) {
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cartItems={cartItems} onRemoveItem={handleRemoveCartItem} />
+
+      {/* Top Bar with Bag Icon Badge */}
+      <div className="max-w-[1500px] mx-auto px-6 lg:px-12 pt-6 flex justify-end">
+        <button 
+          onClick={() => setIsCartOpen(true)}
+          className="relative bg-neutral-100 hover:bg-neutral-200 px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
+        >
+          <ShoppingBag size={16} /> Bag ({cartItems.length})
+        </button>
+      </div>
 
       {/* Category Filter Bar */}
-      <section className="pt-12 pb-8 max-w-[1500px] mx-auto px-6 lg:px-12">
+      <section className="pt-6 pb-8 max-w-[1500px] mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between flex-wrap gap-4 border-b border-neutral-200 pb-8">
           <div className="flex items-center gap-2 text-xs uppercase font-bold tracking-[0.2em] text-neutral-500">
             <Filter size={14} /> Explore Catalog ({filteredProducts.length} items):
@@ -243,65 +290,75 @@ export default function AppLayout({ cartCount = 2 }) {
 
       {/* Product Grid */}
       <section className="max-w-[1500px] mx-auto px-6 lg:px-12 pt-6">
-        {loading ? (
-          <div className="text-center py-20 text-neutral-400 uppercase tracking-widest text-xs">Loading collection from backend...</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((item) => (
-              <div 
-                key={item.id}
-                onClick={() => setQuickViewProduct(item)}
-                className="group bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden hover:border-neutral-400 transition-all duration-500 flex flex-col justify-between shadow-sm cursor-pointer"
-              >
-                <div>
-                  <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {filteredProducts.map((item) => (
+            <div 
+              key={item.id}
+              onClick={() => setQuickViewProduct(item)}
+              className="group bg-neutral-50 border border-neutral-200 rounded-xl overflow-hidden hover:border-neutral-400 transition-all duration-500 flex flex-col justify-between shadow-sm cursor-pointer"
+            >
+              <div>
+                <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover transition-opacity duration-700 group-hover:opacity-0"
+                  />
+                  {item.hoverImage && (
                     <img 
-                      src={item.image} 
+                      src={item.hoverImage} 
                       alt={item.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100 transform group-hover:scale-105"
                     />
-                    
-                    {item.tag && (
-                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md border border-neutral-200 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest text-neutral-900 shadow-sm">
-                        {item.tag}
-                      </div>
-                    )}
-
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); toggleWishlist(item.id); }}
-                      className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-neutral-900 hover:bg-black hover:text-white transition-all cursor-pointer"
-                    >
-                      <Heart size={16} className={wishlist.includes(item.id) ? "fill-red-500 text-red-500" : ""} />
-                    </button>
-                  </div>
-
-                  <div className="p-6 space-y-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 block">{item.category}</span>
-                        <h3 className="font-['Cormorant_Garamond',serif] text-2xl font-semibold text-neutral-900 tracking-wide mt-1">{item.name}</h3>
-                      </div>
-                      <span className="text-lg font-light text-amber-600 font-mono">{item.price}</span>
+                  )}
+                  
+                  {item.tag && (
+                    <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-md border border-neutral-200 px-2.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-widest text-neutral-900 shadow-sm">
+                      {item.tag}
                     </div>
-                    <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed font-light">{item.description}</p>
+                  )}
+
+                  {/* 👉 Wishlist Button passes full product object */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); toggleWishlist(item); }}
+                    className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-neutral-900 hover:bg-black hover:text-white transition-all cursor-pointer"
+                  >
+                    <Heart size={14} className={wishlist.includes(item.id) ? "fill-red-500 text-red-500" : ""} />
+                  </button>
+
+                  <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="w-full bg-black/90 backdrop-blur-md text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 shadow-lg">
+                      <Eye size={12} /> Quick View
+                    </span>
                   </div>
                 </div>
 
-                <div className="px-6 pb-6 pt-3 border-t border-neutral-200 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                  <span className="text-[11px] text-amber-600 flex items-center gap-1">
-                    <ShieldCheck size={14} /> Authenticity Guaranteed
-                  </span>
-                  <button 
-                    onClick={() => triggerToast(`Added ${item.name} to bag`)}
-                    className="text-xs font-bold uppercase tracking-widest text-neutral-900 hover:text-amber-600 transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    Acquire <ArrowUpRight size={14} />
-                  </button>
+                <div className="p-4 space-y-1.5">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-[9px] uppercase tracking-[0.15em] text-neutral-500 block">{item.category}</span>
+                      <h3 className="font-['Cormorant_Garamond',serif] text-lg font-semibold text-neutral-900 tracking-wide mt-0.5">{item.name}</h3>
+                    </div>
+                    <span className="text-sm font-light text-amber-600 font-mono">{item.price}</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-600 line-clamp-2 leading-relaxed font-light">{item.description}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+
+              <div className="px-4 py-3 border-t border-neutral-200 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                <span className="text-[10px] text-amber-600 flex items-center gap-1">
+                  <ShieldCheck size={12} /> Authentic
+                </span>
+                <button 
+                  onClick={() => handleAddToCart(item)}
+                  className="text-[10px] font-bold uppercase tracking-widest text-neutral-900 hover:text-amber-600 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  Acquire <ArrowUpRight size={12} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Quick View Modal */}
@@ -341,10 +398,10 @@ export default function AppLayout({ cartCount = 2 }) {
               </div>
 
               <button 
-                onClick={() => { triggerToast(`Added ${quickViewProduct.name} to bag`); setQuickViewProduct(null); }}
+                onClick={() => handleAddToCart(quickViewProduct)}
                 className="w-full bg-black text-white py-4 rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xl"
               >
-                <ShoppingBag size={16} /> Acquire Item ({quickViewProduct.price})
+                <CartDrawer size={16} /> Acquire Item ({quickViewProduct.price})
               </button>
             </div>
           </div>

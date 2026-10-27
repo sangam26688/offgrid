@@ -11,89 +11,25 @@ import {
   ShieldCheck, 
   ChevronRight, 
   X,
-  Palette
+  Palette,
+  ArrowUpRight,
+  SlidersHorizontal,
+  Star
 } from 'lucide-react';
 
-const DECOR_DATA = [
-  {
-    id: 'dl1',
-    name: 'Monolith Travertine Sculpture Vase',
-    category: 'Objects & Vases',
-    tag: 'Bestseller',
-    price: 450,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&q=80&w=1000',
-    description: 'Honed natural Italian travertine stone carved into brutalist geometric silhouettes. Each piece features unique organic veining.',
-    specifications: ['Natural Italian Travertine', 'Hand-Polished Finish', 'Waterproof Interior Seal', 'Anti-Scratch Felt Base'],
-    finishes: ['Raw Travertine', 'Obsidian Stone']
-  },
-  {
-    id: 'dl2',
-    name: 'Atelier Smoked Cedar Scented Candle (1kg)',
-    category: 'Home Fragrance',
-    tag: 'Signature Object',
-    price: 220,
-    rating: 5.0,
-    image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=1000',
-    description: 'Triple-wick organic soy wax infused with smoked cedar, roasted birch, and black pepper in a custom concrete matte vessel.',
-    specifications: ['120-Hour Burn Time', 'Organic Soy & Coconut Wax', 'Triple Cotton Wicks', 'Reusable Concrete Vessel'],
-    finishes: ['Concrete Grey', 'Obsidian Black']
-  },
-  {
-    id: 'dl3',
-    name: 'Merino Wool & Cashmere Throw Blanket',
-    category: 'Textiles',
-    tag: 'Luxury Comfort',
-    price: 580,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&q=80&w=1000',
-    description: 'Woven in Biella, Italy using 70% extra-fine merino wool and 30% Mongolian cashmere with hand-knotted fringe edges.',
-    specifications: ['70% Merino, 30% Cashmere', 'Dimensions: 140x200cm', 'Dry Clean Only', 'Made in Biella, Italy'],
-    finishes: ['Charcoal Grey', 'Oatmeal', 'Camel']
-  },
-  {
-    id: 'dl4',
-    name: 'Murano Hand-Blown Glass Centerpiece',
-    category: 'Glassware',
-    tag: 'Limited Edition',
-    price: 920,
-    rating: 5.0,
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=1000',
-    description: 'Mouth-blown by master glass artisans in Venice, Italy. Features swirling ribbons of smoked amber glass embedded within clear crystal.',
-    specifications: ['Mouth-Blown Venice Crystal', 'Hand-Signed by Artisan', 'Unique Optical Distortion', 'Weight: 4.2 kg'],
-    finishes: ['Smoked Amber', 'Midnight Blue']
-  },
-  {
-    id: 'dl5',
-    name: 'Brutalist Architectural Bookends (Pair)',
-    category: 'Objects & Vases',
-    tag: 'New Drop',
-    price: 340,
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=1000',
-    description: 'Heavy cast brass and blackened steel bookends inspired by modernist brutalist architecture of the 1970s.',
-    specifications: ['Solid Cast Brass & Steel', 'Felt Protected Bottom', 'Weight: 2.8kg per pair', 'Hand-Patinated Surface'],
-    finishes: ['Brass & Steel', 'All-Black Steel']
-  },
-  {
-    id: 'dl6',
-    name: 'Minimalist Walnut Coffee Table Tray',
-    category: 'Tableware',
-    tag: 'Essential',
-    price: 290,
-    rating: 4.7,
-    image: 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?auto=format&fit=crop&q=80&w=1000',
-    description: 'Crafted from sustainable American black walnut with seamless mitered joints and brushed brass handle accents.',
-    specifications: ['American Black Walnut', 'Brushed Brass Inlay', 'Satin Lacquer Coat', 'Dimensions: 50x30cm'],
-    finishes: ['Dark Walnut', 'Bleached Ash']
-  }
-];
+import { DECOR_DATA, DECOR_CATEGORIES } from './DecorData.js';
 
-export default function DecorLifestylePage() {
+export default function DecorLifestylePage({ brand = "OFFGRID" }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [wishlist, setWishlist] = useState([]);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [selectedFinish, setSelectedFinish] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+
+  const triggerToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
 
   // Filtering Logic
   const filteredProducts = DECOR_DATA.filter((item) => {
@@ -101,130 +37,171 @@ export default function DecorLifestylePage() {
   });
 
   const toggleWishlist = (id) => {
-    setWishlist(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    if (wishlist.includes(id)) {
+      setWishlist(prev => prev.filter(i => i !== id));
+      triggerToast("Removed from wishlist");
+    } else {
+      setWishlist(prev => [...prev, id]);
+      triggerToast("Added to wishlist");
+    }
+  };
+
+  const handleAddToCart = (item) => {
+    triggerToast(`Added ${item.name} to your bag`);
+    setQuickViewProduct(null);
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] text-white font-['Inter',sans-serif] selection:bg-neutral-800 selection:text-white pb-24">
+    <div className="min-h-screen bg-white text-neutral-900 font-['Inter',sans-serif] selection:bg-neutral-200 selection:text-black pb-24">
       
-      {/* 1. Hero Banner */}
-      <section className="relative h-[75vh] flex items-center justify-center overflow-hidden border-b border-neutral-800/80">
-        <div className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000 hover:scale-100"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=2000')` }}>
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-[2000] bg-black text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-semibold tracking-wider uppercase flex items-center gap-2.5 animate-bounce">
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span>{toastMessage}</span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/40 to-transparent"></div>
+      )}
 
-        <div className="relative z-10 max-w-4xl text-center px-6 space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold uppercase tracking-[0.25em] text-neutral-200">
-            <Home size={14} className="text-amber-400" />
-            OFFGRID Home, Art & Interior Atelier
-          </div>
-          <h1 className="font-['Cormorant_Garamond',serif] text-5xl md:text-7xl font-light tracking-[0.15em] uppercase text-white leading-tight">
-            Decor & Lifestyle
+      {/* 1. Hero Banner (Cinematic Style matching Men/Women/Gifts/Kids/Jewelry) */}
+      <section className="relative w-full h-[92vh] flex items-center justify-center px-6 lg:px-20 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=2000"
+            alt="OFFGRID Home, Art & Interior Atelier"
+            className="w-full h-full object-cover object-center filter brightness-90 transform scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 text-white pt-16">
+          <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-[0.35em] uppercase bg-white/10 border border-white/25 backdrop-blur-md px-5 py-2 rounded-full text-white">
+            <Home className="w-3.5 h-3.5 text-amber-300" /> {brand} Home, Art & Interior Atelier
+          </span>
+
+          <h1 className="font-['Cormorant_Garamond',serif] text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.02]">
+            DECOR & LIFESTYLE
           </h1>
-          <p className="text-neutral-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
+
+          <p className="text-gray-200 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed tracking-wide">
             Sculptural objects for the modern sanctuary. Travertine vases, mouth-blown Venetian glass, and tactile cashmere textiles.
           </p>
         </div>
+
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white/60 text-[10px] font-bold uppercase tracking-[0.3em] flex flex-col items-center gap-2">
+          <span>Scroll</span>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-white to-transparent animate-bounce" />
+        </div>
       </section>
 
-      {/* 2. Category Filter Bar */}
-      <section className="max-w-7xl mx-auto px-6 pt-12 pb-8 sticky top-20 z-30 bg-[#080808]/90 backdrop-blur-xl border-b border-neutral-900">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xs uppercase font-bold tracking-[0.2em] text-neutral-500 mr-1 flex items-center gap-1">
-              <Filter size={14} /> Sanctuary Section:
-            </span>
+      {/* 2. Interactive Finder Toolbar (Gifts Style Dropdown Filter) */}
+      <section className="max-w-7xl mx-auto px-6 -mt-10 relative z-20">
+        <div className="bg-white/95 border border-neutral-200 backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal size={18} className="text-neutral-500" />
+              <span className="text-xs uppercase font-bold tracking-[0.2em] text-neutral-800">Refine Your Sanctuary</span>
+            </div>
+            <span className="text-xs text-neutral-500 font-medium">{filteredProducts.length} Interior Objects Found</span>
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-            {['All', 'Objects & Vases', 'Home Fragrance', 'Textiles', 'Glassware', 'Tableware'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-xs font-medium uppercase tracking-wider transition-all whitespace-nowrap ${
-                  selectedCategory === cat 
-                    ? 'bg-white text-black font-bold shadow-lg' 
-                    : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white'
-                }`}
+
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-500 mb-2 flex items-center gap-1">
+                <Filter size={12} /> Sanctuary Section
+              </label>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all cursor-pointer"
               >
-                {cat}
-              </button>
-            ))}
+                {DECOR_CATEGORIES.map(cat => (
+                  <option key={cat} value={cat}>{cat === 'All' ? 'All Sanctuary Sections' : cat}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Product Grid */}
-      <section className="max-w-7xl mx-auto px-6 pt-10">
+      {/* 3. Product Grid - Exactly 4 Compact Cards in 1 Row on Desktop */}
+      <section className="max-w-[1500px] mx-auto px-6 lg:px-12 pt-16 pb-24">
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-24 border border-neutral-900 rounded-2xl bg-neutral-950">
-            <Home size={48} className="mx-auto text-neutral-600 mb-4" />
-            <h3 className="font-['Cormorant_Garamond',serif] text-2xl text-neutral-300">No interior objects found</h3>
+          <div className="text-center py-24 border border-neutral-200 rounded-2xl bg-neutral-50">
+            <Home size={48} className="mx-auto text-neutral-400 mb-4" />
+            <h3 className="font-['Cormorant_Garamond',serif] text-2xl text-neutral-800">No interior objects found</h3>
             <p className="text-xs text-neutral-500 mt-2">Try resetting your filter to explore our full lifestyle vault.</p>
             <button 
               onClick={() => setSelectedCategory('All')}
-              className="mt-6 px-6 py-2.5 bg-white text-black text-xs font-bold uppercase tracking-wider rounded-full hover:bg-neutral-200 transition-all"
+              className="mt-6 px-6 py-2.5 bg-black text-white text-xs font-bold uppercase tracking-wider rounded-full hover:bg-neutral-800 transition-all cursor-pointer"
             >
               Reset Filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredProducts.map((item) => (
               <div 
                 key={item.id}
-                className="group bg-neutral-950 border border-neutral-900 rounded-2xl overflow-hidden hover:border-neutral-700 transition-all duration-500 flex flex-col justify-between shadow-xl"
+                onClick={() => { setQuickViewProduct(item); setSelectedFinish(item.finishes[0]); }}
+                className="group bg-neutral-50 border border-neutral-200 rounded-xl overflow-hidden hover:border-neutral-400 transition-all duration-500 flex flex-col justify-between shadow-sm cursor-pointer"
               >
                 <div>
-                  <div className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
+                  {/* Image Container with Normal + Hover Effect & Compact Aspect Ratio */}
+                  <div className="relative aspect-square overflow-hidden bg-neutral-100">
                     <img 
                       src={item.image} 
                       alt={item.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover transition-opacity duration-700 group-hover:opacity-0"
                     />
+                    {item.hoverImage && (
+                      <img 
+                        src={item.hoverImage} 
+                        alt={item.name} 
+                        className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100 transform group-hover:scale-105"
+                      />
+                    )}
                     
-                    {/* Tag Badge */}
-                    <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest text-amber-300">
+                    <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-md border border-neutral-200 px-2.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-widest text-neutral-900 shadow-sm">
                       {item.tag}
                     </div>
 
-                    {/* Wishlist Button */}
                     <button 
-                      onClick={() => toggleWishlist(item.id)}
-                      className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+                      onClick={(e) => { e.stopPropagation(); toggleWishlist(item.id); }}
+                      className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-neutral-900 hover:bg-black hover:text-white transition-all cursor-pointer"
                     >
-                      <Heart size={16} className={wishlist.includes(item.id) ? "fill-red-500 text-red-500" : ""} />
+                      <Heart size={14} className={wishlist.includes(item.id) ? "fill-red-500 text-red-500" : ""} />
                     </button>
 
-                    {/* Quick View Button */}
-                    <div className="absolute inset-x-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button 
-                        onClick={() => { setQuickViewProduct(item); setSelectedFinish(item.finishes[0]); }}
-                        className="w-full bg-white/95 backdrop-blur-md text-black py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white transition-all flex items-center justify-center gap-1 shadow-lg"
-                      >
-                        <Eye size={14} /> Quick View
-                      </button>
+                    <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="w-full bg-black/90 backdrop-blur-md text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 shadow-lg">
+                        <Eye size={12} /> Quick View
+                      </span>
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-3">
+                  {/* Card Content */}
+                  <div className="p-4 space-y-1.5">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block">{item.category}</span>
-                        <h3 className="font-['Cormorant_Garamond',serif] text-2xl font-semibold text-white tracking-wide mt-1">{item.name}</h3>
+                        <span className="text-[9px] uppercase tracking-[0.15em] text-neutral-500 block">{item.category}</span>
+                        <h3 className="font-['Cormorant_Garamond',serif] text-lg font-semibold text-neutral-900 tracking-wide mt-0.5">{item.name}</h3>
                       </div>
-                      <span className="text-lg font-light text-white">${item.price}</span>
+                      <span className="text-sm font-light text-amber-600 font-mono">${item.price}</span>
                     </div>
-                    <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed font-light">{item.description}</p>
+                    <p className="text-[11px] text-neutral-600 line-clamp-2 leading-relaxed font-light">{item.description}</p>
                   </div>
                 </div>
 
-                <div className="px-6 pb-6 pt-3 border-t border-neutral-900/60 flex items-center justify-between">
-                  <span className="text-[11px] text-amber-400 flex items-center gap-1">
-                    <ShieldCheck size={14} /> Artisanal Certified
+                {/* Card Footer */}
+                <div className="px-4 py-3 border-t border-neutral-200 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                  <span className="text-[10px] text-amber-600 flex items-center gap-1">
+                    <ShieldCheck size={12} /> Artisanal Certified
                   </span>
-                  <button className="text-xs font-bold uppercase tracking-widest text-white hover:text-amber-400 transition-colors flex items-center gap-1">
-                    Acquire <ChevronRight size={14} />
+                  <button 
+                    onClick={() => handleAddToCart(item)}
+                    className="text-[10px] font-bold uppercase tracking-widest text-neutral-900 hover:text-amber-600 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    Acquire <ArrowUpRight size={12} />
                   </button>
                 </div>
               </div>
@@ -234,34 +211,34 @@ export default function DecorLifestylePage() {
       </section>
 
       {/* 4. Interior Philosophy Banner */}
-      <section className="max-w-7xl mx-auto px-6 pt-20">
-        <div className="bg-neutral-950 border border-neutral-800 rounded-3xl p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="max-w-7xl mx-auto px-6 mb-16">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-3">
-            <div className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-amber-600 shadow-sm">
               <Palette size={20} />
             </div>
             <h4 className="font-['Cormorant_Garamond',serif] text-xl font-semibold">Brutalism & Minimalism</h4>
-            <p className="text-xs text-neutral-400 font-light leading-relaxed">
+            <p className="text-xs text-neutral-600 font-light leading-relaxed">
               Objects designed with architectural integrity, celebrating raw stone, cast brass, and monolithic organic forms.
             </p>
           </div>
 
           <div className="space-y-3">
-            <div className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-amber-600 shadow-sm">
               <Compass size={20} />
             </div>
             <h4 className="font-['Cormorant_Garamond',serif] text-xl font-semibold">Venetian & Biella Craft</h4>
-            <p className="text-xs text-neutral-400 font-light leading-relaxed">
+            <p className="text-xs text-neutral-600 font-light leading-relaxed">
               Collaborations with generational workshops across Murano, Italy and Biella to produce heirloom-grade interior accents.
             </p>
           </div>
 
           <div className="space-y-3">
-            <div className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-amber-600 shadow-sm">
               <Sparkles size={20} />
             </div>
             <h4 className="font-['Cormorant_Garamond',serif] text-xl font-semibold">Sustainable Raw Materials</h4>
-            <p className="text-xs text-neutral-400 font-light leading-relaxed">
+            <p className="text-xs text-neutral-600 font-light leading-relaxed">
               Natural travertine stone, organic soy waxes, and cruelty-free Mongolian cashmere crafted for conscious living spaces.
             </p>
           </div>
@@ -270,36 +247,36 @@ export default function DecorLifestylePage() {
 
       {/* 5. Quick View Modal */}
       {quickViewProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-neutral-950 border border-neutral-800 rounded-3xl max-w-3xl w-full overflow-hidden relative grid grid-cols-1 md:grid-cols-2 shadow-2xl">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white border border-neutral-200 rounded-3xl max-w-3xl w-full overflow-hidden relative grid grid-cols-1 md:grid-cols-2 shadow-2xl">
             <button 
               onClick={() => setQuickViewProduct(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all"
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-neutral-100 text-neutral-900 flex items-center justify-center hover:bg-black hover:text-white transition-all cursor-pointer"
             >
               <X size={18} />
             </button>
 
-            <div className="h-full bg-neutral-900">
+            <div className="h-[400px] md:h-full bg-neutral-100">
               <img src={quickViewProduct.image} alt={quickViewProduct.name} className="w-full h-full object-cover" />
             </div>
 
-            <div className="p-8 space-y-6 flex flex-col justify-between">
+            <div className="p-8 space-y-6 flex flex-col justify-between text-neutral-900">
               <div className="space-y-4">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-amber-400 font-bold">{quickViewProduct.tag}</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-amber-600 font-bold">{quickViewProduct.tag}</span>
                 <h3 className="font-['Cormorant_Garamond',serif] text-3xl font-semibold">{quickViewProduct.name}</h3>
-                <p className="text-2xl font-light text-white">${quickViewProduct.price}</p>
-                <p className="text-xs text-neutral-400 leading-relaxed font-light">{quickViewProduct.description}</p>
+                <p className="text-2xl font-light text-neutral-900 font-mono">${quickViewProduct.price}</p>
+                <p className="text-xs text-neutral-600 leading-relaxed font-light">{quickViewProduct.description}</p>
 
                 {/* Finish Selector */}
                 <div className="pt-2">
-                  <label className="text-[11px] uppercase tracking-widest text-neutral-300 font-semibold block mb-2">Select Finish / Material</label>
+                  <label className="text-[11px] uppercase tracking-widest text-neutral-700 font-semibold block mb-2">Select Finish / Material</label>
                   <div className="flex flex-wrap gap-2">
                     {quickViewProduct.finishes.map(fin => (
                       <button 
                         key={fin} 
                         onClick={() => setSelectedFinish(fin)}
-                        className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
-                          selectedFinish === fin ? 'bg-white text-black border-white' : 'border-neutral-800 text-neutral-400 hover:border-neutral-600'
+                        className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                          selectedFinish === fin ? 'bg-black text-white border-black' : 'border-neutral-300 text-neutral-700 hover:border-black'
                         }`}
                       >
                         {fin}
@@ -310,18 +287,21 @@ export default function DecorLifestylePage() {
 
                 {/* Specifications List */}
                 <div className="pt-2">
-                  <h4 className="text-[11px] uppercase tracking-widest text-neutral-300 font-semibold mb-1.5">Specifications:</h4>
-                  <ul className="space-y-1 text-xs text-neutral-400">
+                  <h4 className="text-[11px] uppercase tracking-widest text-neutral-700 font-semibold mb-1.5">Specifications:</h4>
+                  <ul className="space-y-1 text-xs text-neutral-600">
                     {quickViewProduct.specifications.map((spec, idx) => (
                       <li key={idx} className="flex items-center gap-2">
-                        <Check size={12} className="text-amber-400" /> {spec}
+                        <Check size={12} className="text-amber-600" /> {spec}
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
 
-              <button className="w-full bg-white text-black py-4 rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={() => handleAddToCart(quickViewProduct)}
+                className="w-full bg-black text-white py-4 rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+              >
                 <ShoppingBag size={16} /> Acquire {selectedFinish ? `(${selectedFinish})` : ''}
               </button>
             </div>

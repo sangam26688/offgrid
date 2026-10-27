@@ -4,7 +4,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import GlassNav from "./components/GlassNav";
+import GlassNav from "./components/nav/GlassNav.jsx";
 import Home from "./pages/home/Home.jsx";
 import Gifts from "./pages/gifts/Gifts.jsx";
 import Travel from "./pages/travel/Travel.jsx";
@@ -15,7 +15,9 @@ import Men from "./pages/men/Men.jsx";
 import Women from "./pages/women/Women.jsx";
 import NewIn from "./pages/new/NewIn.jsx";
 import JewelryWatchesPage from "./pages/luxury/JewelryWatchesPage.jsx";
-import Footer from "./components/Footer.jsx"; // Footer bhi add kar sakte ho
+import Footer from "./components/footer/Footer.jsx"; // Footer bhi add kar sakte ho
+import PrivacyPolicyPage from "./pages/privacy/PrivacyPolicyPage.jsx";
+import ClientCarePage from "./components/footer/ClientCareData.jsx";
 
 const App = () => {
   return (
@@ -27,15 +29,18 @@ const App = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/gifts" element={<Gifts />} />
-            <Route path="/men" element={<Men />} />
-            <Route path="/women" element={<Women />} />
-            <Route path="/kids" element={<Kids />} />
-            <Route path="/new-in" element={<NewIn />} />
-            <Route path="/travel" element={<Travel />} />
-            <Route path="/fragrance" element={<Fragrance />} />
-            <Route path="/jewellery-watches" element={<JewelryWatchesPage />} />
+            <Route path="/Gifts" element={<Gifts />} />
+            <Route path="/Men" element={<Men />} />
+            <Route path="/Women" element={<Women />} />
+            <Route path="/Kids" element={<Kids />} />
+            <Route path="/New-In" element={<NewIn />} />
+            <Route path="/Travel" element={<Travel />} />
+            <Route path="/Fragrance" element={<Fragrance />} />
+            <Route path="/luxury" element={<JewelryWatchesPage />} />
             <Route path="/decor" element={<DecorLifestylePage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/client" element={<ClientCarePage />} />
+            
           </Routes>
         </main>
 

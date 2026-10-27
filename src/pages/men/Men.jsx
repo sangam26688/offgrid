@@ -15,121 +15,8 @@ import {
 } from "lucide-react";
 
 // Mock Data for Men's Collection
-import { CATEGORIES, PRODUCTS } from './Men';
+import { CATEGORIES, PRODUCTS } from './Men.js';
 
-// const PRODUCTS = [
-//   {
-//     id: 1,
-//     name: "Oversized Wool Trench Coat",
-//     category: "Outerwear",
-//     price: "$480",
-//     oldPrice: "$560",
-//     tag: "Best Seller",
-//     image: "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#1C1917", "#44403C", "#78716C"],
-//     sizes: ["S", "M", "L", "XL"]
-//   },
-//   {
-//     id: 2,
-//     name: "Architectural Leather Bomber",
-//     category: "Outerwear",
-//     price: "$620",
-//     tag: "New Arrival",
-//     image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#09090B", "#27272A"],
-//     sizes: ["M", "L", "XL"]
-//   },
-//   {
-//     id: 3,
-//     name: "Monochrome Tailored Blazer",
-//     category: "Tailoring",
-//     price: "$390",
-//     oldPrice: "$450",
-//     tag: "Limited",
-//     image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#111827", "#374151"],
-//     sizes: ["S", "M", "L"]
-//   },
-//   {
-//     id: 4,
-//     name: "Heavyweight Heavy-Rib Hoodie",
-//     category: "Streetwear",
-//     price: "$180",
-//     tag: "Essential",
-//     image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#18181B", "#D4D4D8", "#A1A1AA"],
-//     sizes: ["S", "M", "L", "XL", "XXL"]
-//   },
-//   {
-//     id: 5,
-//     name: "Relaxed Pleated Trousers",
-//     category: "Tailoring",
-//     price: "$240",
-//     tag: "Popular",
-//     image: "https://images.unsplash.com/photo-1479064555552-3ef4979f8908?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#1C1917", "#52525B"],
-//     sizes: ["30", "32", "34", "36"]
-//   },
-//   {
-//     id: 6,
-//     name: "Merino Wool Turtle Neck",
-//     category: "Knitwear",
-//     price: "$210",
-//     tag: "Winter Core",
-//     image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#0F172A", "#475569", "#94A3B8"],
-//     sizes: ["S", "M", "L", "XL"]
-//   },
-//   {
-//     id: 7,
-//     name: "Minimal Utility Overshirt",
-//     category: "Streetwear",
-//     price: "$260",
-//     tag: "New",
-//     image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#262626", "#525252"],
-//     sizes: ["M", "L", "XL"]
-//   },
-//   {
-//     id: 8,
-//     name: "Sculptured Leather Duffel Bag",
-//     category: "Accessories",
-//     price: "$510",
-//     tag: "Iconic",
-//     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800",
-//     hoverImage: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800",
-//     colors: ["#000000", "#3F3F46"],
-//     sizes: ["One Size"]
-//   }
-// ];
-
-// const LOOKBOOK_ITEMS = [
-//   {
-//     title: "Urban Minimalist",
-//     subtitle: "Edition 01 / Winter 26",
-//     img: "https://images.unsplash.com/photo-1490578474895-699bc4e2cf59?auto=format&fit=crop&q=80&w=1200",
-//     itemCount: "4 Pieces"
-//   },
-//   {
-//     title: "Architectural Tailoring",
-//     subtitle: "Edition 02 / Formal Tech",
-//     img: "https://images.unsplash.com/photo-1506634572416-48cdfe530110?auto=format&fit=crop&q=80&w=1200",
-//     itemCount: "3 Pieces"
-//   },
-//   {
-//     title: "Off-Duty Monolith",
-//     subtitle: "Edition 03 / Streetwear",
-//     img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&q=80&w=1200",
-//     itemCount: "5 Pieces"
-//   }
-// ];
 
 export default function Men() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -378,7 +265,7 @@ export default function Men() {
         </div>
       </section>
 
-      {/* 8. EDITORIAL LOOKBOOK GALLERY SECTION */}
+      {/* 8. EDITORIAL LOOKBOOK GALLERY SECTION
       <section id="lookbook" className="bg-neutral-900 text-white py-24 px-6 lg:px-12">
         <div className="max-w-[1500px] mx-auto space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-800 pb-8">
@@ -393,9 +280,9 @@ export default function Men() {
             <p className="text-sm text-neutral-400 max-w-md mt-4 md:mt-0 font-light leading-relaxed">
               Explore curated outfits styled for urban landscapes, cold climates, and high-stakes formal aesthetics.
             </p>
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {LOOKBOOK_ITEMS.map((item, idx) => (
               <div
                 key={idx}
@@ -424,7 +311,7 @@ export default function Men() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* 9. QUICK VIEW MODAL */}
       {quickViewProduct && (
